@@ -80,6 +80,11 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
 
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
       const data = new FormData(form);
       const label = (id) => form.querySelector(`label[for="${id}"]`)?.textContent || id;
       const lines = [];
@@ -89,9 +94,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const subject = `Wedding Film Inquiry — ${data.get("partner1") || "New Inquiry"}`;
       const body = lines.join("\n");
-      const mailtoUrl = `mailto:anabellemerlick@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      const to = "anabellemerlick@gmail.com";
+      const query = `subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      const mailtoUrl = `mailto:${to}?${query}`;
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-      window.location.href = mailtoUrl;
+      // Gmail compose opens in the browser using the visitor's existing Gmail login
+      // (no mail-app setup or password); fall back to their mail app if blocked
+      const win = window.open(gmailUrl, "_blank", "noopener");
+      if (!win) window.location.href = mailtoUrl;
+
+      const fallback = document.querySelector("#mailto-fallback");
+      if (fallback) fallback.href = mailtoUrl;
 
       form.hidden = true;
       document.querySelector(".form-success").classList.add("is-visible");
