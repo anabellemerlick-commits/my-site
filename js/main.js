@@ -1,4 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // force-start autoplay videos — Safari sometimes ignores the autoplay
+  // attribute alone and needs an explicit play() call
+  document.querySelectorAll("video[autoplay]").forEach((video) => {
+    video.muted = true;
+    const tryPlay = () => video.play().catch(() => {});
+    tryPlay();
+    video.addEventListener("loadedmetadata", tryPlay);
+  });
+
   const header = document.querySelector(".site-header");
   const toggle = document.querySelector(".nav-toggle");
   const nav = document.querySelector(".nav-primary");
