@@ -500,12 +500,11 @@ body.on-dark .site-header:not(.is-solid) .nav-link { color: var(--cream-white); 
 .filter-btn.active, .filter-btn:hover { color: var(--ink); border-color: var(--gold); }
 
 .masonry {
-  columns: 3 260px;
-  column-gap: 1.1rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.1rem;
 }
 .masonry-item {
-  break-inside: avoid;
-  margin-bottom: 1.1rem;
   transition: opacity 0.35s ease, transform 0.35s ease;
 }
 .masonry-item.is-hidden { display: none; }
@@ -967,6 +966,6 @@ body.on-dark .site-header:not(.is-solid) .nav-link { color: var(--cream-white); 
   .collage { grid-template-columns: repeat(2, 1fr); }
   .c-span-2, .c-span-3, .c-span-4 { grid-column: span 2; }
   .form-grid { grid-template-columns: 1fr; }
-  .masonry { columns: 1 100%; }
+  .masonry { grid-template-columns: 1fr; }
   .footer-top { flex-direction: column; }
 }
