@@ -74,10 +74,14 @@ document.addEventListener("DOMContentLoaded", () => {
     applyFilter(initialBtn.dataset.filter);
   }
 
-  // inquire form — opens the visitor's email client with the details pre-filled
+  // inquire form — submits to Formspree, which emails the inquiry to Anabelle
   const form = document.querySelector(".inquire-form");
   if (form) {
-    form.addEventListener("submit", (e) => {
+    const FORMSPREE_URL = "https://formspree.io/f/xljdnooe";
+    const errorBox = document.querySelector(".form-error");
+    const submitBtn = form.querySelector(".form-submit");
+
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       if (!form.checkValidity()) {
@@ -91,24 +95,35 @@ document.addEventListener("DOMContentLoaded", () => {
       for (const [name, value] of data.entries()) {
         if (value) lines.push(`${label(name)}: ${value}`);
       }
-
       const subject = `Wedding Film Inquiry — ${data.get("partner1") || "New Inquiry"}`;
-      const body = lines.join("\n");
-      const to = "anabellemerlick@gmail.com";
-      const query = `subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      const mailtoUrl = `mailto:${to}?${query}`;
-      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      data.append("_subject", subject);
 
-      // Gmail compose opens in the browser using the visitor's existing Gmail login
-      // (no mail-app setup or password); fall back to their mail app if blocked
-      const win = window.open(gmailUrl, "_blank", "noopener");
-      if (!win) window.location.href = mailtoUrl;
+      if (errorBox) errorBox.hidden = true;
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending...";
 
-      const fallback = document.querySelector("#mailto-fallback");
-      if (fallback) fallback.href = mailtoUrl;
-
-      form.hidden = true;
-      document.querySelector(".form-success").classList.add("is-visible");
+      try {
+        const res = await fetch(FORMSPREE_URL, {
+          method: "POST",
+          body: data,
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) throw new Error("Formspree error " + res.status);
+        form.hidden = true;
+        document.querySelector(".form-success").classList.add("is-visible");
+      } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+        if (errorBox) {
+          const body = encodeURIComponent(lines.join("\n"));
+          const link = errorBox.querySelector("a");
+          if (link) {
+            link.href = `mailto:anabellemerlick@gmail.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+          }
+          errorBox.hidden = false;
+        }
+      }
     });
   }
 });

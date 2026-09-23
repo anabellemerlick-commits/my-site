@@ -662,6 +662,8 @@ body.on-dark .site-header:not(.is-solid) .nav-link { color: var(--cream-white); 
 }
 .form-submit:hover { background: transparent; color: var(--forest); }
 .form-note { font-size: 0.85rem; color: var(--ink-soft); margin-top: 1rem; }
+.form-error { font-size: 0.9rem; color: #9b2c2c; margin-top: 1rem; }
+.form-error[hidden] { display: none; }
 .form-success {
   display: none;
   padding: 2rem;
