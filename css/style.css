@@ -668,11 +668,9 @@ body.on-dark .site-header:not(.is-solid) .nav-link { color: var(--cream-white); 
 .form-success {
   display: none;
   padding: 2rem;
-  border: 1px solid var(--forest);
   text-align: center;
 }
 .form-success.is-visible { display: block; }
-.form-success .script { font-size: 1.8rem; color: var(--forest); }
 
 /* ---------- Home: hero split + wordmark bar ---------- */
 .hero-split {
